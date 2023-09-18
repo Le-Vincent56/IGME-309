@@ -117,7 +117,7 @@ void DrawPoint(float v1[], float pointSize) {
 }
 
 // Draw the tree
-void DrawTree(){
+void DrawTree() {
     // Draw triangles for the tree
     DrawTriangle(bv1, bv2, bv3);
     DrawTriangle(mv1, mv2, mv3);
