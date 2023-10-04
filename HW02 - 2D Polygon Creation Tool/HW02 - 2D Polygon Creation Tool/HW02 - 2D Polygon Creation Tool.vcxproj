@@ -131,6 +131,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="HW02 - 2D Polygon Creation Tool.cpp" />
+    <ClCompile Include="PolyObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PolyObject.h" />
