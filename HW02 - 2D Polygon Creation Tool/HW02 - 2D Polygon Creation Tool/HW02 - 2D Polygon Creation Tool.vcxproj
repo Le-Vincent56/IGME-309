@@ -104,12 +104,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Profiles\vdl9926\source\repos\IGME-309\MyLib\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Profiles\vdl9926\source\repos\IGME-309\MyLib\include;C:\Users\levin\source\repos\IGME-309\MyLib\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\Profiles\vdl9926\source\repos\IGME-309\MyLib\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Profiles\vdl9926\source\repos\IGME-309\MyLib\lib\x64;C:\Users\levin\source\repos\IGME-309\MyLib\lib\x64</AdditionalLibraryDirectories>
       <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);glew32.lib;freeglut.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
