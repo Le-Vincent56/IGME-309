@@ -1,3 +1,7 @@
+// Course: IGME 309
+// Student Name: Vincent Le
+// Assignment Number: 02
+
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #else
@@ -5,31 +9,26 @@
 #endif
 
 #include <iostream>
+#include <vector>
 #include "PolyObject.h"
 using namespace std;
 
 float canvasSize[] = { 10.0f, 10.0f };
 int rasterSize[] = { 800, 600 };
-
-// structure for storing 3 2D vertices of a triangle
-int numOfVertices = 0;
-float v[2 * 3];
-float color[3];
+vec3 color = vec3(1.0, 0.0, 0.0);
 
 float mousePos[2];
 
+vector<PolyObject> polygonList;
 PolyObject polygon;
 
 void init(void)
 {
-    for (int i = 0; i < 6; i++) {
-        v[i] = 0.0f;
-    }
-        
     mousePos[0] = mousePos[1] = 0.0f;
     color[0] = 1.0f;
     color[1] = color[2] = 0.0f;
 
+    // Create a polygon then push it to the back
     polygon = PolyObject();
     polygon.setColor(color);
 }
@@ -49,10 +48,15 @@ void display(void)
     glClearColor(1.0, 1.0, 1.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glColor3fv(color);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
+    // Draw all finished polygons
+    for (int i = 0; i < polygonList.size(); i++) {
+        polygonList[i].draw();
+    }
+
+    // Draw the current polygon
     polygon.draw(vec2(mousePos[0], mousePos[1]));
 
     drawCursor();
@@ -100,9 +104,22 @@ void motion(int x, int y)
 void keyboard(unsigned char key, int x, int y)
 {
     switch (key) {
-    case 27:
-        exit(0);
-        break;
+        case 27:
+            exit(0);
+            break;
+
+        // Press D to stop creating and draw final
+        case 100:
+            // Add the polygon into the list
+            polygonList.push_back(polygon);
+
+            // Reset the polygon
+            polygon = PolyObject();
+            polygon.setColor(color);
+
+            // Update the display
+            glutPostRedisplay();
+            break;
     }
 }
 
@@ -110,27 +127,29 @@ void menu(int value)
 {
     switch (value) {
     case 0: // clear
-        numOfVertices = 0;
+        // Clear the polygon list
+        polygonList.clear();
         glutPostRedisplay();
         break;
-    case 1: //exit
+    case 1:
+        // Exit
         exit(0);
-    case 2: // red
-        color[0] = 1.0f;
-        color[1] = 0.0f;
-        color[2] = 0.0f;
+    case 2:
+        // Set color to red
+        color = vec3(1.0, 0.0, 0.0);
+        polygon.setColor(color);
         glutPostRedisplay();
         break;
-    case 3: // green
-        color[0] = 0.0f;
-        color[1] = 1.0f;
-        color[2] = 0.0f;
+    case 3:
+        // Set color to green
+        color = vec3(0.0, 1.0, 0.0);
+        polygon.setColor(color);
         glutPostRedisplay();
         break;
-    case 4: // blue
-        color[0] = 0.0f;
-        color[1] = 0.0f;
-        color[2] = 1.0f;
+    case 4:
+        // Set color to blue
+        color = vec3(0.0, 0.0, 1.0);
+        polygon.setColor(color);
         glutPostRedisplay();
         break;
     default:
@@ -157,7 +176,7 @@ int main(int argc, char* argv[])
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
     glutInitWindowSize(rasterSize[0], rasterSize[1]);
-    glutCreateWindow("Mouse Event - draw a triangle");
+    glutCreateWindow("Draw a 2D Polygon");
 
     glutReshapeFunc(reshape);
     glutDisplayFunc(display);
