@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{874dddf9-1102-4be4-8cba-9cea07cf4978}</ProjectGuid>
-    <RootNamespace>HW03ParticleSystem</RootNamespace>
+    <ProjectGuid>{50575796-7a79-4b84-8fe5-df1f0903737b}</ProjectGuid>
+    <RootNamespace>E08SimplePendulum</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -104,12 +104,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Profiles\vdl9926\source\repos\IGME-309\MyLib\include;C:\Users\levin\source\repos\IGME-309\MyLib\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Profiles\vdl9926\source\repos\IGME-309\MyLib\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\Profiles\vdl9926\source\repos\IGME-309\MyLib\lib\x64;C:\Users\levin\source\repos\IGME-309\MyLib\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Profiles\vdl9926\source\repos\IGME-309\MyLib\lib\x64</AdditionalLibraryDirectories>
       <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);glew32.lib;freeglut.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -130,14 +130,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="HW03 - Particle System.cpp" />
-    <ClCompile Include="ParticleSystem.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="ParticleSystem.h" />
-    <ClInclude Include="Text.h" />
+    <ClCompile Include="E08 - Simple Pendulum.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
