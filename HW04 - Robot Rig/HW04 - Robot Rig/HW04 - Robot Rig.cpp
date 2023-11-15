@@ -12,7 +12,7 @@
 #include <math.h>
 using namespace std;
 
-#define MAX_RIG_PARTS 7
+#define MAX_RIG_PARTS 8
 
 int win_width = 600, win_height = 600;
 float canvas_width = 20.0f; float canvas_height = 20.0f;
@@ -24,18 +24,6 @@ float colors[3 * MAX_RIG_PARTS];
 float rotations[MAX_RIG_PARTS];
 
 int rigIndex;
-
-// Lowerbody
-float lb1[2];
-float lb2[2];
-float lb3[2];
-float lb4[2];
-
-// Upperbody
-float ub1[2];
-float ub2[2];
-float ub3[2];
-float ub4[2];
 
 // Neck
 float n1[2];
@@ -49,58 +37,22 @@ float h2[2];
 float h3[2];
 float h4[2];
 
-void initializeVertices() {
-    // Rig
-    // Lowerbody
-    lb1[0] = -2.15;
-    lb1[1] = -1.5;
-    lb2[0] = -2.15;
-    lb2[1] = 1.5;
-    lb3[0] = 2.15;
-    lb3[1] = 1.5;
-    lb4[0] = 2.15;
-    lb4[1] = -1.5;
-
-    // Upperbody
-    ub1[0] = -3.15;
-    ub1[1] = 1.5;
-    ub2[0] = -3.15;
-    ub2[1] = 3.5;
-    ub3[0] = 3.15;
-    ub3[1] = 3.5;
-    ub4[0] = 3.15;
-    ub4[1] = 1.5;
-
-    // Neck
-    n1[0] = -0.85;
-    n1[1] = 3.5;
-    n2[0] = -0.85;
-    n2[1] = 5;
-    n3[0] = 0.85;
-    n3[1] = 5;
-    n4[0] = 0.85;
-    n4[1] = 3.5;
-
-    // Head
-    h1[0] = -1.5;
-    h1[1] = 5;
-    h2[0] = -1.5;
-    h2[1] = 7;
-    h3[0] = 1.5;
-    h3[1] = 7;
-    h4[0] = 1.5;
-    h4[1] = 5;
-}
-
 void init(void)
 {
     for (int i = 0; i < 256; i++) {
         keyStates[i] = false;
     }
     for (int i = 0; i < MAX_RIG_PARTS; i++) {
-        colors[i * 3 + 0] = 0.0f; // red
-        colors[i * 3 + 1] = 0.0f; // green
-        colors[i * 3 + 2] = 0.0f; // blue
+        if (i == 0) {
+            colors[i * 3 + 0] = 1.0f;
+            colors[i * 3 + 1] = 0.0f;
+            colors[i * 3 + 2] = 0.0f;
+        }
+        else {
+            colors[i * 3 + 0] = 0.0f; // red
+            colors[i * 3 + 1] = 0.0f; // green
+            colors[i * 3 + 2] = 0.0f; // blue
+        }
 
         rotations[i] = 0.0f;
     }
@@ -109,29 +61,6 @@ void init(void)
 
     // rigIndex 0 is the highest level
     rigIndex = 0;
-
-    initializeVertices();
-}
-
-void drawSquare(const GLfloat* v1, const GLfloat* v2, const GLfloat* v3, const GLfloat* v4, const float* c)
-{
-    glColor3fv(c);
-    glLineWidth(3.0f);
-    glBegin(GL_LINE_LOOP);
-    glVertex2fv(v1);
-    glVertex2fv(v2);
-    glVertex2fv(v3);
-    glVertex2fv(v4);
-
-    lb1[0] = -2.15;
-    lb1[1] = -1.5;
-    lb2[0] = -2.15;
-    lb2[1] = 1.5;
-    lb3[0] = 2.15;
-    lb3[1] = 1.5;
-    lb4[0] = 2.15;
-    lb4[1] = -1.5;
-    glEnd();
 }
 
 void drawSquare(const GLfloat lowX, const GLfloat lowY, const GLfloat highX, const GLfloat highY, const float* c)
@@ -154,10 +83,50 @@ void display(void)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    drawSquare(lb1, lb2, lb3, lb4, colors + rigIndex * 3);
-    drawSquare(ub1, ub2, ub3, ub4, colors + rigIndex * 3);
-    drawSquare(n1, n2, n3, n4, colors + rigIndex * 3);
-    drawSquare(h1, h2, h3, h4, colors + rigIndex * 3);
+    int currentIndex = -1;
+
+    // Lower Body
+    currentIndex = 0;
+    glRotatef(rotations[currentIndex], 0.0f, 0.0f, 1.0f);
+    drawSquare(-2.15, -1.5, 2.15, 1.5, colors + currentIndex * 3);
+
+    glPushMatrix();
+    // Upper Body
+    currentIndex = 1;
+    glRotatef(rotations[currentIndex], 0.0f, 0.0f, 1.0f);
+    drawSquare(-3.15, 1.5, 3.15, 3.5, colors + currentIndex * 3);
+    
+    // Neck
+    currentIndex = 2;
+    glRotatef(rotations[currentIndex], 0.0f, 0.0f, 1.0f);
+    drawSquare(-0.85, 3.5, 0.85, 5, colors + currentIndex * 3);
+
+    // Head
+    currentIndex = 3;
+    glRotatef(rotations[currentIndex], 0.0f, 0.0f, 1.0f);
+    drawSquare(-1.5, 5, 1.5, 7, colors + currentIndex * 3);
+    
+    // Right Arm
+    currentIndex = 4;
+    glRotatef(rotations[currentIndex], 0.0f, 0.0f, 1.0f);
+    drawSquare(3.15, 2.15, 4.75, 3.5, colors + currentIndex * 3);
+
+    // Left Arm
+    currentIndex = 5;
+    glRotatef(rotations[currentIndex], 0.0f, 0.0f, 1.0f);
+    drawSquare(-4.75, 2.15, -3.15, 3.5, colors + currentIndex * 3);
+
+    glPopMatrix();
+    
+    // Right Thigh
+    currentIndex = 6;
+    glRotatef(rotations[currentIndex], 0.0f, 0.0f, 1.0f);
+    drawSquare(-2.15, -3, -0.75, -1.5, colors + currentIndex * 3);
+
+    // Left Thight
+    currentIndex = 7;
+    glRotatef(rotations[currentIndex], 0.0f, 0.0f, 1.0f);
+    drawSquare(0.75, -3, 2.15, -1.5, colors + currentIndex * 3);
 
     glutSwapBuffers();
 }
@@ -183,22 +152,55 @@ void keyboard(unsigned char key, int x, int y)
 
     // Key press = "W/w"
     if (key == 87 || key == 119) {
-        std::cout << "W!";
+        std::cout << "W!\n";
+        if (rigIndex < MAX_RIG_PARTS - 1) {
+            rigIndex++;
+        }
     }
 
     // Key press = "W/w"
     if (key == 65 || key == 97) {
-        std::cout << "A!";
+        std::cout << "A!\n";
     }
 
     // Key press = "S/s"
     if (key == 83 || key == 115) {
-        std::cout << "S!";
+        std::cout << "S!\n";
+        if (rigIndex > 0) {
+            rigIndex--;
+        }
     }
 
     // Key press = "D/d"
     if (key == 68 || key == 100) {
-        std::cout << "D!";
+        std::cout << "D!\n";
+    }
+
+    for (int i = 0; i < MAX_RIG_PARTS; i++) {
+        if (i == rigIndex) {
+            colors[i * 3 + 0] = 1.0f;
+            colors[i * 3 + 1] = 0.0f;
+            colors[i * 3 + 2] = 0.0f;
+        }
+        else {
+            colors[i * 3 + 0] = 0.0f;
+            colors[i * 3 + 1] = 0.0f;
+            colors[i * 3 + 2] = 0.0f;
+        }
+    }
+
+    glutPostRedisplay();
+}
+
+void
+keyboardArrows(int key, int x, int y)
+{
+    if (key == GLUT_KEY_LEFT) {
+        std::cout << "Left Arrow!\n";
+        rotations[rigIndex] += 1.0f;
+    } else if (key == GLUT_KEY_RIGHT) {
+        std::cout << "Right Arrow\n";
+        rotations[rigIndex] -= 1.0f;
     }
 
     glutPostRedisplay();
@@ -206,15 +208,6 @@ void keyboard(unsigned char key, int x, int y)
 
 void keyboardUp(unsigned char key, int x, int y)
 {
-    unsigned char asciiOffset = 49; // see an ascii table
-    for (unsigned char i = '1'; i < '7'; i++) {
-        if (key == i) {
-            keyStates[i] = false;
-            colors[(i - asciiOffset) * 3 + 0] = 0.0f;
-            colors[(i - asciiOffset) * 3 + 1] = 0.0f;
-            colors[(i - asciiOffset) * 3 + 2] = 0.0f;
-        }
-    }
     glutPostRedisplay();
 }
 
@@ -229,6 +222,7 @@ int main(int argc, char* argv[])
     glutReshapeFunc(reshape);
     glutDisplayFunc(display);
     glutKeyboardFunc(keyboard);
+    glutSpecialFunc(keyboardArrows);
     glutKeyboardUpFunc(keyboardUp);
     glutMainLoop();
     return 0;
