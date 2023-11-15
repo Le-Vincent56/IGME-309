@@ -88,6 +88,7 @@ void display(void)
     glRotatef(rotations[cid], 0.0f, 0.0f, 1.0f);
     drawCircle(CIRCLE_RADIUM * (MAX_NUM_CIRCLE - cid) / MAX_NUM_CIRCLE, colors + cid * 3);
 
+    glPushMatrix();
     // circle 3
     cid = 3;
     glTranslatef(translations[cid * 2 + 0], translations[cid * 2 + 1], 0.0f);
