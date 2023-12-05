@@ -2,6 +2,7 @@
 #include "Hunter.h"
 #include "Bullet.h"
 #include "Monster.h"
+#include <iostream>
 
 class MyHunter : public Hunter
 {
@@ -17,6 +18,7 @@ private:
 	float reloadTimer;	// count down time to shoot next bullets
 
 	// attributes
+	float personalSpace = 4.0f;
 	int maxLife = 3;
 	float speed = 15.0f;
 	float bulletSpeed = 30.0f;
@@ -39,6 +41,8 @@ public:
 	void update(float _deltaTime, const vector<Monster*> _monsters, const vector<Hunter*> _players) override;
 private:
 	bool circleCollision(vec2 c1, vec2 c2, float r1, float r2);
+	vec2 flee(vec2 _positionToFlee, float weight);
+	vec2 separate(vector<Hunter*> _players);
 
 	/*****************************/
 

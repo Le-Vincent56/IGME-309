@@ -15,7 +15,7 @@ MyHunter::MyHunter(vec2 _position, int _ID)
 	// You have a total of 20 points for upgrading, 
 	// and each attribute (armor, speed, shotgun, and bullet) can’t exceed 10 points. 
 	unsigned int armorPoint = 2;
-	unsigned int speedPoint = 1;
+	unsigned int speedPoint = 10;
 	unsigned int shotgunPoint = 2;
 	unsigned int bulletPoint = 6;
 	upgrade(armorPoint, speedPoint, shotgunPoint, bulletPoint);
@@ -66,28 +66,14 @@ void MyHunter::update(float _deltaTime, const vector<Monster*> _monsters, const 
 
 		// Check if nearest monster is set
 		if (nearestMonster != nullptr) {
+			// Update position to flee from the nearest monster
+			position += flee(nearestMonster->position, 3.0f) * _deltaTime;
 
-			// ----- WANDERING -----
-
-
-			// ----- FLEEING -----
-			// Calculate the hunter's desired velocity
-			vec2 desiredVelocity = this->position - nearestMonster->position;
-			float magnitude = glm::sqrt(pow(desiredVelocity.x, 2) + pow(desiredVelocity.y, 2));
-			vec2 normalizedVelocity = desiredVelocity / magnitude;
-			desiredVelocity = normalizedVelocity * speed;
-			
-			// Calculate the monster's velocity
-			vec2 monsterVelocity = nearestMonster->position - this->position;
-
-			// Calculate the fleeing velocity
-			vec2 fleeingVelocity = desiredVelocity - monsterVelocity;
-
-			// Update position
-			position += fleeingVelocity * _deltaTime;
+			// Update position to separate from other hunters
+			position += separate(_players) * _deltaTime;
 
 			// Set rotation to look towards the nearest monster
-			this->rotation = atan(this->position.x - nearestMonster->position.x, this->position.y - nearestMonster->position.y);
+			this->rotation = atan(normalize(this->position - nearestMonster->position).x, normalize(this->position - nearestMonster->position).y);
 		}
 
 		// Write your implementation above
@@ -103,6 +89,32 @@ void MyHunter::update(float _deltaTime, const vector<Monster*> _monsters, const 
 		if (this->position.y > 300.0f - radius)
 			this->position.y = 300.0f - radius;
 	}
+}
+
+vec2 MyHunter::flee(vec2 _positionToFlee, float weight) {
+	vec2 fleeForce = normalize(this->position - _positionToFlee) * speed * weight;
+	return fleeForce;
+}
+
+vec2 MyHunter::separate(vector<Hunter*> _players) {
+	vec2 separateForce = vec2(0.0f, 0.0f);
+	float sqrPersonalSpace = pow(this->personalSpace, 2);
+
+	// Loop through all other players
+	for (int i = 0; i < _players.size(); i++) {
+		if (_players[i] != this) {
+			// Find the square distance between the two agents
+			float sqrtDist = glm::sqrt(distance(this->position, _players[i]->position));
+
+			// Modify weight depending on how close the other player is
+			if (sqrtDist < sqrPersonalSpace) {
+				float weight = sqrPersonalSpace / (sqrtDist + 0.1f);
+				separateForce += flee(_players[i]->position, weight);
+			}	
+		}
+	}
+	
+	return separateForce;
 }
 
 bool MyHunter::circleCollision(vec2 c1, vec2 c2, float r1, float r2)
