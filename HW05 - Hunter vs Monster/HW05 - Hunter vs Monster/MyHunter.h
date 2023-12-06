@@ -19,6 +19,7 @@ private:
 
 	// attributes
 	float personalSpace = 4.0f;
+	float dangerDistance = 60.0f;
 	int maxLife = 3;
 	float speed = 15.0f;
 	float bulletSpeed = 30.0f;

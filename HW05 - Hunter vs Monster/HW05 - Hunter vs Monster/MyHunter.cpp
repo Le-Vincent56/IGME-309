@@ -14,17 +14,17 @@ MyHunter::MyHunter(vec2 _position, int _ID)
 	// upgrade your player by calling the upgrade(armor, speed, shotgun, bullet) function
 	// You have a total of 20 points for upgrading, 
 	// and each attribute (armor, speed, shotgun, and bullet) can’t exceed 10 points. 
-	unsigned int armorPoint = 2;
-	unsigned int speedPoint = 10;
-	unsigned int shotgunPoint = 2;
-	unsigned int bulletPoint = 6;
+	unsigned int armorPoint = 0;
+	unsigned int speedPoint = 2;
+	unsigned int shotgunPoint = 9;
+	unsigned int bulletPoint = 9;
 	upgrade(armorPoint, speedPoint, shotgunPoint, bulletPoint);
 
 	// customize the color of your player
-	bodyColor = vec3(1.0f, 0.0f, 0.0f);
-	headColor = vec3(0.7f, 0.1f, 0.1f);
-	shotgunColor = vec3(0.0f, 0.0f, 0.0f);
-	bulletColor = vec3(0.0f, 0.0f, 0.0f);
+	bodyColor = vec3(0.0f, 0.0f, 0.0f);
+	headColor = vec3(0.9f, 0.9f, 0.9f);
+	shotgunColor = vec3(0.69f, 0.69f, 0.69f);
+	bulletColor = vec3(0.23f, 0.23f, 0.23f);
 	// write your code above
 	/******************************/
 
@@ -46,14 +46,8 @@ void MyHunter::update(float _deltaTime, const vector<Monster*> _monsters, const 
 		}
 
 		/*********************************************/
-		// Write your implementation below:
-		// 1. Update the hunter's position: Utilize the 'speed' variable and 'deltaTime' to calculate the new position.
-		// 2. Update the hunter's rotation: Adjust the rotation based on the current game logic or input.
-
-		// Provided Example:
-		// The following example code demonstrates how to locate the nearest monster:
+		// Locate the nearest monster
 		float minDis = 1000.0f;
-
 		for (int i = 0; i < _monsters.size(); i++) {
 			if (_monsters[i]->isActived == false)
 				continue;
@@ -67,16 +61,19 @@ void MyHunter::update(float _deltaTime, const vector<Monster*> _monsters, const 
 		// Check if nearest monster is set
 		if (nearestMonster != nullptr) {
 			// Update position to flee from the nearest monster
-			position += flee(nearestMonster->position, 3.0f) * _deltaTime;
+
+			// If a monster is in range, flee from it
+			if (distance(this->position, nearestMonster->position) <= dangerDistance + this->radius) {
+				position += flee(nearestMonster->position, 1.0f) * _deltaTime;
+			}
 
 			// Update position to separate from other hunters
 			position += separate(_players) * _deltaTime;
 
 			// Set rotation to look towards the nearest monster
-			this->rotation = atan(normalize(this->position - nearestMonster->position).x, normalize(this->position - nearestMonster->position).y);
+			vec2 toMonster = nearestMonster->position - this->position;
+			this->rotation = glm::degrees(atan(toMonster.y, toMonster.x));
 		}
-
-		// Write your implementation above
 		/************************************************************/
 
 		// ensure the hunter stay in the battleground
@@ -100,17 +97,18 @@ vec2 MyHunter::separate(vector<Hunter*> _players) {
 	vec2 separateForce = vec2(0.0f, 0.0f);
 	float sqrPersonalSpace = pow(this->personalSpace, 2);
 
-	// Loop through all other players
+	// Loop through all other hunters
 	for (int i = 0; i < _players.size(); i++) {
-		if (_players[i] != this) {
-			// Find the square distance between the two agents
+		// Check if the current hunter in the list is this one and if the distance between them calls for separation
+		if (_players[i] != this && distance(this->position, _players[i]->position) <= (personalSpace * 2) + (this->radius * 2)) {
+			// If not, find the square distance between the two hunters
 			float sqrtDist = glm::sqrt(distance(this->position, _players[i]->position));
 
-			// Modify weight depending on how close the other player is
+			// Modify weight depending on how close the other hunter is
 			if (sqrtDist < sqrPersonalSpace) {
 				float weight = sqrPersonalSpace / (sqrtDist + 0.1f);
 				separateForce += flee(_players[i]->position, weight);
-			}	
+			}
 		}
 	}
 	
@@ -120,8 +118,17 @@ vec2 MyHunter::separate(vector<Hunter*> _players) {
 bool MyHunter::circleCollision(vec2 c1, vec2 c2, float r1, float r2)
 {
 	/***************************************/
-	// return whether or not two circles are intersected
-	return false;
+	// Combine the radii - squared to increase performance (sqrt is expensive later)
+	float combinedRadii = pow(r1 + r2, 2);
+
+	// Get the distance between the two centers
+	float centerDistance = pow(distance(c1, c2), 2);
+
+	// If the center distance length is less than the two radii, then the circles are colliding
+	if (centerDistance < combinedRadii) {
+		return true;
+	}
+	else return false;
 	/***************************************/
 }
 
@@ -178,14 +185,6 @@ void MyHunter::draw()
 		glVertex2f(0.5f * radius * cos(angle), 0.5f * radius * sin(angle));
 	}
 	glEnd();
-
-	if (nearestMonster != nullptr) {
-		glColor3f(1.0f, 0.0f, 0.0f);
-		glBegin(GL_LINES);
-		glVertex2f(this->position.x, this->position.y);
-		glVertex2f(nearestMonster->position.x, nearestMonster->position.y);
-		glEnd();
-	}
 
 	glPopMatrix();
 }
